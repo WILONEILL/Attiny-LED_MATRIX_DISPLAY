@@ -1,0 +1,81 @@
+int maxInUse = 4;    //change this variable to set how many MAX7219's you'll use
+
+                     // define max7219 registers
+byte max7219_reg_noop        = 0x00;
+byte max7219_reg_digit0      = 0x01;
+byte max7219_reg_digit1      = 0x02;
+byte max7219_reg_digit2      = 0x03;
+byte max7219_reg_digit3      = 0x04;
+byte max7219_reg_digit4      = 0x05;
+byte max7219_reg_digit5      = 0x06;
+byte max7219_reg_digit6      = 0x07;
+byte max7219_reg_digit7      = 0x08;
+byte max7219_reg_decodeMode  = 0x09;
+byte max7219_reg_intensity   = 0x0a;
+byte max7219_reg_scanLimit   = 0x0b;
+byte max7219_reg_shutdown    = 0x0c;
+byte max7219_reg_displayTest = 0x0f;
+ 
+void putByte(byte data) {
+  byte i = 8;
+  byte mask;
+  while(i > 0) {
+    mask = 0x01 << (i - 1);      // get bitmask
+    digitalWrite( Matrixclock, LOW);   // tick
+    if (data & mask){            // choose bit
+      digitalWrite(MatrixdataIn, HIGH);// send 1
+    }else{
+      digitalWrite(MatrixdataIn, LOW); // send 0
+    }
+    digitalWrite(Matrixclock, HIGH);   // tock
+    --i;                         // move to lesser bit
+  }
+}
+ 
+void maxSingle( byte reg, byte col) {    
+//maxSingle is the "easy"  function to use for a     //single max7219
+ 
+  digitalWrite(Matrixload, LOW);       // begin    
+  putByte(reg);                  // specify register
+  putByte(col);//((data & 0x01) * 256) + data >> 1); // put data  
+  digitalWrite(Matrixload, LOW);       // and load da shit
+  digitalWrite(Matrixload,HIGH);
+}
+ 
+void maxAll (byte reg, byte col) {    // initialize  all  MAX7219's in the system
+  int c = 0;
+  digitalWrite(Matrixload, LOW);  // begin    
+  for ( c =1; c<= maxInUse; c++) {
+  putByte(reg);  // specify register
+  putByte(col);//((data & 0x01) * 256) + data >> 1); // put data
+    }
+  digitalWrite(Matrixload, LOW);
+  digitalWrite(Matrixload,HIGH);
+}
+ 
+void maxOne(byte maxNr, byte reg, byte col) {    
+//maxOne is for adressing different MAX7219's,
+//whilele having a couple of them cascaded
+ 
+  int c = 0;
+  digitalWrite(Matrixload, LOW);  // begin    
+ 
+  for ( c = maxInUse; c > maxNr; c--) {
+    putByte(0);    // means no operation
+    putByte(0);    // means no operation
+  }
+ 
+  putByte(reg);  // specify register
+  putByte(col);//((data & 0x01) * 256) + data >> 1); // put data
+ 
+  for ( c =maxNr-1; c >= 1; c--) {
+    putByte(0);    // means no operation
+    putByte(0);    // means no operation
+  }
+ 
+  digitalWrite(Matrixload, LOW); // and load da shit
+  digitalWrite(Matrixload,HIGH);
+}
+ 
+ 
+
