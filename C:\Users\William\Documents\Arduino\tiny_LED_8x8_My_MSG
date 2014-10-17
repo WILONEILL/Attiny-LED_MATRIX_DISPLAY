@@ -1,0 +1,67 @@
+
+int MatrixdataIn = 0;
+int Matrixload = 1;
+int Matrixclock = 2;
+#include "Clock_8x8.h" ;
+
+byte big[] = {
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 30,63,127,254,127,63,30,0,0,0,
+ 38,73,73,73,50,0,124,18,17,18,
+ 124,0,127,6,8,48,127,0,65,127,
+ 65,34,28,0,127,9,25,41,78,0,
+ 124,18,17,18,124,0,0,0,58,69,
+ 74,48,40,0,0,0,127,32,24,32,
+ 127,0,65,127,65,0,127,64,64,64,
+ 0,127,64,64,64,0,65,127,65,0,
+ 124,18,17,18,124,0,127,2,12,2,
+ 127,0,0,0,30,63,127,254,127,63,
+ 30,0,0,0,0,0,0,0,0,0,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+ 15,48,64,48,15,0,68,125,64,0,
+ 28,32,64,32,28,0,56,84,84,84,
+ 8,0,0,0,28,34,65,65,34,0,
+ 60,64,64,60,64,0,252,24,36,36,
+ 24,0,68,125,64,0,56,68,68,40,
+ 127,0,56,68,68,68,56,0,124,8,
+ 4,4,120,0,0,0,0,79,0,79,
+ 0,79,0,0,0,0,0,0,0,0,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+   };     
+
+ 
+void setup () {
+  pinMode(MatrixdataIn, OUTPUT);
+  pinMode(Matrixclock,  OUTPUT);
+  pinMode(Matrixload,   OUTPUT);
+ 
+//initiation of the max 7219
+  maxAll(max7219_reg_scanLimit, 0x07);      
+  maxAll(max7219_reg_decodeMode, 0x00);  // using an led matrix (not digits)
+  maxAll(max7219_reg_shutdown, 0x01);    // not in shutdown mode
+  maxAll(max7219_reg_displayTest, 0x00); // no display test
+  for (int e=1; e<=8; e++) { maxAll(e,0);  } // Clean display
+  maxAll(max7219_reg_intensity, 0x0f & 0x08);    // the first 0x0f is the value you can set
+                                                  // range: 0x00 to 0x0f
+}  
+ 
+void loop () {
+ 
+  // TAILLE DU TESXTE + 64
+  
+  for (int t=0; t <240
+  ;t++) {
+    for(int p=0;p<8;p++) maxOne(1,p+1,big[t+p]);
+    for(int p=0;p<8;p++) maxOne(2,p+1,big[t+p+8]);
+    for(int p=0;p<8;p++) maxOne(3,p+1,big[t+p+16]);
+    for(int p=0;p<8;p++) maxOne(4,p+1,big[t+p+24]);
+    delay(map(analogRead(A2),0,1023,0,250));
+  }  
+ 
+}
+
